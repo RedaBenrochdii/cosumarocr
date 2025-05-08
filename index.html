@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="description" content="Application de gestion et chatbot mutuelle" />
+    <title>Toto</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" />
+
+    <!-- Basculer thème clair/sombre selon préférence OS -->
+    <script>
+      (() => {
+        const userPref = window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light';
+        document.documentElement.setAttribute('data-theme', userPref);
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <noscript>
+      <strong>JavaScript est désactivé ; l’application ne peut pas fonctionner correctement.</strong>
+    </noscript>
+
+    <!-- Point d’entrée de Vite -->
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

@@ -1,0 +1,110 @@
+.container {
+    width: 100%;
+    max-width: 1400px; /* beaucoup plus large */
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+  
+  .container h1 {
+    text-align: center;
+    margin-bottom: 24px;
+    font-size: 32px;
+    color: #2d3748;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .table th, 
+  .table td {
+    padding: 18px 24px; /* plus gros */
+    font-size: 18px; /* plus grand */
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+    color: #4a5568;
+  }
+  
+  .table th {
+    background-color: #f7fafc;
+    font-weight: 700;
+    font-size: 20px;
+    color: #2d3748;
+  }
+  
+  .table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    gap: 16px;
+  }
+  
+  .pagination button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    background-color: #3182ce;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+  
+  .pagination button:hover {
+    background-color: #2b6cb0;
+    transform: translateY(-2px);
+  }
+  
+  .deleteAllButton {
+    display: block;
+    margin: 30px auto 0;
+    padding: 12px 24px;
+    font-size: 18px;
+    background-color: #e53e3e;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+  
+  .deleteAllButton:hover {
+    background-color: #c53030;
+    transform: translateY(-2px);
+  }
+  
+  .actions {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .actions button {
+    padding: 8px 16px;
+    font-size: 16px;
+    border: none;
+    background-color: #718096;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+  
+  .actions button:hover {
+    background-color: #4a5568;
+    transform: translateY(-2px);
+  }
+  
