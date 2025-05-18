@@ -1,0 +1,23 @@
+.uploaderContainer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.uploadLabel {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-block;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.uploadLabel:hover {
+  background-color: #0056b3;
+}
+
+.hiddenInput {
+  display: none;
+}
