@@ -29,12 +29,10 @@ export default function Home() {
       return;
     }
 
-    // 1) capture le chart en image
     const canvas = await html2canvas(chartRef.current);
     const imgData = canvas.toDataURL('image/png');
     const base64 = imgData.split(',')[1];
 
-    // 2) crée un workbook Excel et ajoute l’image via base64
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet('Consommation');
 
@@ -43,13 +41,11 @@ export default function Home() {
       extension: 'png',
     });
 
-    // place l’image de A1 à H20
     sheet.addImage(imageId, {
       tl: { col: 0, row: 0 },
       br: { col: 7, row: 20 }
     });
 
-    // 3) génère le buffer et déclenche le téléchargement
     const buffer = await workbook.xlsx.writeBuffer();
     saveAs(new Blob([buffer]), 'graphique_consommation.xlsx');
   };
@@ -63,7 +59,7 @@ export default function Home() {
         <button onClick={exportChartToExcel} className={styles.exportBtn}>
           Exporter en Excel
         </button>
-        <div ref={chartRef}>
+        <div ref={chartRef} className={styles.chartWrapper}>
           <DailyConsumptionChart data={dailyData} />
         </div>
       </section>

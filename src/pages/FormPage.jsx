@@ -1,4 +1,3 @@
-// src/pages/FormPage.jsx
 import React, { useState, useCallback, useEffect } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { FileUploader } from '../components/FileUploader';
@@ -30,7 +29,6 @@ export default function FormPage() {
   const [formData, setFormData] = useState(INITIAL_FORM_STATE);
   const [formList, setFormList] = useLocalStorage('formList', []);
 
-  // Gestion de l'autoremplissage OCR
   const handleAutoFill = useCallback((fields) => {
     setFormData(prev => ({
       ...prev,
@@ -40,7 +38,6 @@ export default function FormPage() {
     }));
   }, []);
 
-  // Changement du matricule
   const handleMatriculeChange = useCallback(e => {
     const matricule = e.target.value;
     setFormData(prev => {
@@ -54,20 +51,32 @@ export default function FormPage() {
     });
   }, [employesData]);
 
-  // Gestion générique des changements
+  const handleNomChange = useCallback(e => {
+    const nom = e.target.value;
+    setFormData(prev => {
+      const base = { ...prev, Nom_Employe: nom };
+      const emp = employesData.find(x => x.Nom_Employe.toLowerCase() === nom.toLowerCase());
+      return emp ? {
+        ...base,
+        ...emp,
+        Matricule_Employe: emp.Matricule_Employe,
+        Prenom_Employe: emp.Prenom_Employe,
+        DateConsultation: emp.DateConsultation?.split('T')[0] || ''
+      } : base;
+    });
+  }, [employesData]);
+
   const handleChange = useCallback(e => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   }, []);
 
-  // Soumission du formulaire
   const handleSubmit = useCallback(e => {
     e.preventDefault();
     setFormList(prev => [...prev, formData]);
     setFormData(INITIAL_FORM_STATE);
   }, [formData, setFormList]);
 
-  // Gestion suppression
   const handleDelete = useCallback(idx => {
     setFormList(prev => prev.filter((_, i) => i !== idx));
   }, [setFormList]);
@@ -76,7 +85,6 @@ export default function FormPage() {
     if (window.confirm('Supprimer toutes les entrées ?')) setFormList([]);
   }, [setFormList]);
 
-  // Édition d'une entrée
   const handleEdit = useCallback((item, idx) => {
     if (window.confirm('Modifier cette entrée ?')) {
       setFormData(item);
@@ -84,7 +92,6 @@ export default function FormPage() {
     }
   }, [setFormList]);
 
-  // Génération fichier Excel
   const generateExcelFile = useCallback(() => {
     const filtered = formList.map(row => 
       EXPORT_FIELDS.reduce((acc, key) => ({ ...acc, [key]: row[key] || '' }), {})
@@ -95,16 +102,15 @@ export default function FormPage() {
     return wb;
   }, [formList]);
 
-  // Envoi par Gmail
   const handleOpenGmail = useCallback(() => {
     if (!formList.length) return alert('Aucune donnée à exporter');
-    
+
     const wb = generateExcelFile();
     XLSX.writeFile(wb, 'DonneesMutuelle.xlsx');
-    
-    const mailto = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent('wafaassurance@gmail.com')}
-      &su=${encodeURIComponent('Données Mutuelle')}
-      &body=${encodeURIComponent('Bonjour,\n\nVeuillez trouver ci-joint les données.')}`;
+
+    const mailto = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent('wafaassurance@gmail.com')}` +
+      `&su=${encodeURIComponent('Données Mutuelle')}` +
+      `&body=${encodeURIComponent('Bonjour,\n\nVeuillez trouver ci-joint les données.')}`;
 
     window.open(mailto, '_blank');
   }, [formList, generateExcelFile]);
@@ -113,22 +119,17 @@ export default function FormPage() {
     <div className={styles.container}>
       <h1 className={styles.title}>Gestion Mutuelle</h1>
 
-      <FileUploader 
-        onDataLoaded={setEmployesData} 
-        fileTypes=".csv,.xlsx"
-      />
+      <FileUploader onDataLoaded={setEmployesData} fileTypes=".csv,.xlsx" />
 
-      <OCRScanner 
-        onAutoFill={handleAutoFill} 
-        className={styles.ocrSection}
-      />
+      <OCRScanner onAutoFill={handleAutoFill} className={styles.ocrSection} />
 
       <ConsumptionForm
         formData={formData}
-        employes={employesData}
         onMatriculeChange={handleMatriculeChange}
+        onNomChange={handleNomChange}
         onChange={handleChange}
         onSubmit={handleSubmit}
+        dependents={employesData}
       />
 
       <DataTable
@@ -140,18 +141,11 @@ export default function FormPage() {
       />
 
       <div className={styles.actions}>
-        <button
-          onClick={handleOpenGmail}
-          disabled={!formList.length}
-          className={styles.primaryButton}
-        >
-          📤 Exporter vers Gmail
+        <button onClick={handleOpenGmail} disabled={!formList.length} className={styles.primaryButton}>
+          Exporter vers Gmail
         </button>
-        <button
-          onClick={handleDeleteAll}
-          className={styles.dangerButton}
-        >
-          🗑️ Tout supprimer
+        <button onClick={handleDeleteAll} className={styles.dangerButton}>
+          
         </button>
       </div>
     </div>

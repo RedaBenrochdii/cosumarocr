@@ -3,7 +3,7 @@ import styles from '../styles/FormPage.module.css';
 
 export function DataTable({ data, onDelete, onDeleteAll, onEdit }) {
   return (
-    <div>
+    <div className={styles.scrollContainer}>
       <table className={styles.table}>
         <thead>
           <tr>
@@ -17,7 +17,7 @@ export function DataTable({ data, onDelete, onDeleteAll, onEdit }) {
             <th>Montant</th>
             <th>Remboursé</th>
             <th>Code Assurance</th>
-            <th>Numéro Déclaration</th>
+            <th>Déclaration</th>
             <th>Ayant droit</th>
             <th>Actions</th>
           </tr>
@@ -36,10 +36,16 @@ export function DataTable({ data, onDelete, onDeleteAll, onEdit }) {
               <td>{item.Montant_Rembourse}</td>
               <td>{item.Code_Assurance}</td>
               <td>{item.Numero_Declaration}</td>
-              <td>{item.Ayant_Droit}</td> {/* Affichage de l'ayant droit */}
+              <td>{item.Ayant_Droit}</td>
               <td>
-                <button onClick={() => onEdit(item, idx)}>Modifier</button>
-                <button onClick={() => onDelete(idx)}>Supprimer</button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => onEdit(item, idx)} className={styles.sendButton}>
+                    Modifier
+                  </button>
+                  <button onClick={() => onDelete(idx)} className={styles.deleteAllButton}>
+                    Supprimer
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
@@ -47,9 +53,11 @@ export function DataTable({ data, onDelete, onDeleteAll, onEdit }) {
       </table>
 
       {data.length > 0 && (
-        <button onClick={onDeleteAll} className={styles.deleteAllButton}>
-          Supprimer Tout
-        </button>
+        <div className="text-center mt-6">
+          <button onClick={onDeleteAll} className={styles.deleteAllButton}>
+            Supprimer Tout
+          </button>
+        </div>
       )}
     </div>
   );

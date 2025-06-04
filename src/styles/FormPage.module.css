@@ -1,75 +1,102 @@
-/* Container principal : Utilise toute la largeur sans espace à gauche */
+/* ✅ Conteneur principal */
 .container {
   display: flex;
   flex-direction: column;
-  padding: 0; /* Retirer les marges internes */
-  margin: 0; /* Retirer la marge externe */
-  width: 100%; /* Occupe toute la largeur disponible */
-  box-sizing: border-box; /* Prend en compte le padding et la bordure dans les dimensions */
+  margin: 0 auto;
+  padding: 24px;
+  width: 100%;
+  max-width: 1280px;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background-color: #f9fafb;
 }
 
-/* Formulaire : Assurer une mise en page fluide avec un espacement cohérent */
+/* ✅ Titre principal */
+.title {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 32px;
+  color: #2d3748;
+}
+
+/* ✅ Formulaire aligné en grille fluide */
 .form {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin: 0; /* Enlever les marges autour du formulaire */
-  padding: 0; /* Enlever le padding */
+  gap: 16px;
+  margin: 0;
+  padding: 16px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
-/* Champs du formulaire : Utilisation optimisée de l'espace */
-.form input {
-  flex: 1 1 200px;
-  padding: 10px;
-  font-size: 16px;
-  box-sizing: border-box; /* Prendre en compte padding et border dans les dimensions */
-  border: 1px solid #ccc;
+/* ✅ Champs de formulaire */
+.form input,
+.form select {
+  flex: 1 1 240px;
+  padding: 10px 14px;
+  font-size: 15px;
+  border: 1px solid #cbd5e0;
   border-radius: 8px;
-  margin: 0; /* S'assurer qu'il n'y a pas de marge par défaut */
+  box-sizing: border-box;
+  background-color: white;
 }
 
+.form input:focus,
+.form select:focus {
+  border-color: #3182ce;
+  outline: none;
+}
+
+/* ✅ Bouton du formulaire */
 .form button {
-  padding: 10px 20px;
+  padding: 10px 24px;
   font-size: 16px;
   background-color: #3182ce;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  margin: 0; /* Retirer toute marge */
+  transition: background-color 0.3s ease;
 }
 
 .form button:hover {
   background-color: #2b6cb0;
-  transform: translateY(-2px);
 }
 
-/* Tableau : Éliminer les espaces à gauche et faire en sorte qu'il occupe toute la largeur */
+/* ✅ Tableau */
 .table {
-  width: 100%; /* Assure que le tableau prend toute la largeur disponible */
-  margin: 0; /* Pas de marges autour du tableau */
-  padding: 0; /* Pas de padding supplémentaire */
-  border-collapse: collapse; /* Pour éviter les espaces internes des cellules */
+  width: 100%;
+  margin-top: 24px;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .table th,
 .table td {
-  border: 1px solid #ddd;
-  padding: 14px;
+  padding: 16px 20px;
   font-size: 15px;
-  text-align: left;
-  margin: 0; /* Retirer toute marge des cellules */
+  border-bottom: 1px solid #e2e8f0;
+  color: #4a5568;
 }
 
-/* Pagination : Mise en page centrée et boutons réactifs */
+.table th {
+  background-color: #f7fafc;
+  font-weight: bold;
+  color: #2d3748;
+}
+
+/* ✅ Pagination */
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12px;
-  margin: 0; /* Retirer toute marge autour de la pagination */
-  padding: 0; /* Retirer tout padding autour de la pagination */
+  gap: 16px;
+  margin-top: 20px;
 }
 
 .pagination button {
@@ -80,61 +107,58 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  margin: 0; /* Retirer toute marge */
+  transition: background-color 0.2s ease;
 }
 
 .pagination button:hover {
   background-color: #2b6cb0;
-  transform: translateY(-2px);
 }
 
-/* Bouton "Supprimer tout" : Centré et design réactif */
+/* ✅ Bouton "Tout supprimer" */
 .deleteAllButton {
   display: block;
-  margin: 24px auto 0;
-  padding: 10px 20px;
+  margin: 32px auto 0;
+  padding: 12px 24px;
   font-size: 16px;
   background-color: #e53e3e;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: background-color 0.2s ease;
 }
 
 .deleteAllButton:hover {
   background-color: #c53030;
-  transform: translateY(-2px);
 }
 
-/* Bouton d'envoi : Édition simplifiée avec une bonne hiérarchie */
-.sendButton {
-  margin-top: 20px;
-  padding: 10px 20px;
+/* ✅ Bouton principal (Exporter) */
+.primaryButton {
+  margin-top: 16px;
+  padding: 10px 24px;
   background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 8px;
-  cursor: pointer;
   font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-.sendButton:hover {
-  background-color: #45a049;
+.primaryButton:hover {
+  background-color: #38a169;
 }
 
-/* Conteneur du tableau de données : Pour s'assurer qu'il n'y a pas de décalage */
+/* ✅ Actions (ligne boutons) */
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+/* ✅ Conteneur scroll si nécessaire */
 .scrollContainer {
-  margin: 0; /* Pas de marge autour du tableau */
-  padding: 0; /* Pas de padding supplémentaire */
-  width: 100%; /* Remplir toute la largeur disponible */
-  box-sizing: border-box;
-}
-
-/* Pour la barre de navigation, ajuster la largeur et les marges */
-.navbar {
-  width: 200px; /* Ajuster la largeur de la barre de navigation */
-  margin: 0; /* Enlever toute marge */
-  padding: 0; /* Retirer le padding */
+  overflow-x: auto;
+  margin-top: 24px;
 }

@@ -1,10 +1,10 @@
-// src/components/ConsumptionForm.jsx
 import React from 'react';
-import styles from '../styles/FormPage.module.css';
+import styles from '../styles/ConsumptionForm.module.css';
 
 export function ConsumptionForm({
   formData,
   onMatriculeChange,
+  onNomChange,
   onChange,
   onSubmit,
   dependents = []
@@ -17,15 +17,23 @@ export function ConsumptionForm({
         onChange={onMatriculeChange}
         placeholder="Matricule Employé"
         required
+        className={styles.input}
       />
 
       <input
+        list="noms-employes"
         name="Nom_Employe"
         value={formData.Nom_Employe}
-        onChange={onChange}
+        onChange={onNomChange}
         placeholder="Nom Employé"
         required
+        className={styles.input}
       />
+      <datalist id="noms-employes">
+        {dependents.map((emp, i) => (
+          <option key={i} value={emp.Nom_Employe} />
+        ))}
+      </datalist>
 
       <input
         name="Prenom_Employe"
@@ -33,6 +41,7 @@ export function ConsumptionForm({
         onChange={onChange}
         placeholder="Prénom Employé"
         required
+        className={styles.input}
       />
 
       <input
@@ -41,6 +50,7 @@ export function ConsumptionForm({
         value={formData.DateConsultation}
         onChange={onChange}
         required
+        className={styles.input}
       />
 
       <input
@@ -48,6 +58,7 @@ export function ConsumptionForm({
         value={formData.Nom_Malade}
         onChange={onChange}
         placeholder="Nom Malade"
+        className={styles.input}
       />
 
       <input
@@ -55,6 +66,7 @@ export function ConsumptionForm({
         value={formData.Prenom_Malade}
         onChange={onChange}
         placeholder="Prénom Malade"
+        className={styles.input}
       />
 
       <input
@@ -62,6 +74,7 @@ export function ConsumptionForm({
         value={formData.Type_Malade}
         onChange={onChange}
         placeholder="Type Malade"
+        className={styles.input}
       />
 
       <input
@@ -70,6 +83,7 @@ export function ConsumptionForm({
         value={formData.Montant}
         onChange={onChange}
         placeholder="Montant"
+        className={styles.input}
       />
 
       <input
@@ -78,6 +92,7 @@ export function ConsumptionForm({
         value={formData.Montant_Rembourse}
         onChange={onChange}
         placeholder="Montant Remboursé"
+        className={styles.input}
       />
 
       <input
@@ -85,6 +100,7 @@ export function ConsumptionForm({
         value={formData.Code_Assurance}
         onChange={onChange}
         placeholder="Code Assurance"
+        className={styles.input}
       />
 
       <input
@@ -94,22 +110,24 @@ export function ConsumptionForm({
         onChange={onChange}
         placeholder="Numéro de déclaration"
         required
+        className={styles.input}
       />
 
-      <input
-        list="dependents-list"
+      <select
         name="Ayant_Droit"
+        id="Ayant_Droit"
         value={formData.Ayant_Droit}
         onChange={onChange}
-        placeholder="Sélectionner un ayant‑droit"
-      />
-      <datalist id="dependents-list">
-        {dependents.map((name, i) => (
-          <option key={i} value={name} />
-        ))}
-      </datalist>
+        required
+        className={styles.input}
+      >
+        <option value="">-- Sélectionner --</option>
+        <option value="employe">Employé</option>
+        <option value="conjoint">Conjoint</option>
+        <option value="enfant">Enfant</option>
+      </select>
 
-      <button type="submit" className={styles.submitButton}>
+      <button type="submit" className={styles.button}>
         Ajouter
       </button>
     </form>
