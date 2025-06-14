@@ -78,7 +78,6 @@ export default function OCRScanner({ onAutoFill }) {
           className="ocr-input"
         />
         <span className="ocr-button">
-          {status || '📤 Importer document'}
         </span>
       </label>
       {status && <div className="ocr-status">{status}</div>}

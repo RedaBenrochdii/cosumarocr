@@ -106,3 +106,23 @@
         transform: translateY(0);
     }
 }
+.logoutBtn {
+  margin-top: auto; /* Aligne le bouton en bas de la sidebar */
+  background: linear-gradient(to right, #e53e3e, #f56565); /* Dégradé rouge */
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.logoutBtn:hover {
+  background: linear-gradient(to right, #c6acac, #e4cdcd); /* Inverser le dégradé au survol */
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}

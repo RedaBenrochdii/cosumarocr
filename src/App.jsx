@@ -1,23 +1,28 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
-import Home from './pages/Home';
+// src/App.jsx
+import { Routes, Route, useLocation } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
 import FormPage from './pages/FormPage';
-import Settings from './pages/Settings';
-import './index.css';
+import Sidebar from './components/Sidebar';
 import EmployeList from './components/EmployeList';
+import DocumentsReceived from './pages/DocumentsReceived';
+import Home from './pages/Home';
+import PrivateRoute from './components/PrivateRoute';
+import './index.css';
 
 const App = () => {
-  return (
-    <div style={{ display: 'flex', width: '100%', margin: 0, padding: 0 }}>
-  <Sidebar />
-  <main style={{ flex: 1, padding: 0, margin: 0 }}>
-    <EmployeList />
+  const location = useLocation();
+  const isLoginPage = location.pathname === '/login';
 
+  return (
+    <div style={{ display: 'flex', width: '100%' }}>
+      {!isLoginPage && <Sidebar />}
+      <main style={{ flex: 1 }}>
+        {!isLoginPage && <EmployeList />}
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/form" element={<FormPage />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+          <Route path="/form" element={<PrivateRoute><FormPage /></PrivateRoute>} />
+          <Route path="/settings" element={<PrivateRoute><DocumentsReceived /></PrivateRoute>} />
         </Routes>
       </main>
     </div>

@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import { FileUploader } from '../components/FileUploader';
 import { ConsumptionForm } from '../components/ConsumptionForm';
 import { DataTable } from '../components/DataTable';
 import OCRScanner from '../components/OCRScanner';
 import styles from '../styles/FormPage.module.css';
 import * as XLSX from 'xlsx';
+import axios from 'axios';
 
 const INITIAL_FORM_STATE = {
   DateConsultation: '',
@@ -28,6 +28,13 @@ export default function FormPage() {
   const [employesData, setEmployesData] = useState([]);
   const [formData, setFormData] = useState(INITIAL_FORM_STATE);
   const [formList, setFormList] = useLocalStorage('formList', []);
+
+  // ✅ Charger automatiquement les données employé depuis le backend
+  useEffect(() => {
+    axios.get('http://localhost:4000/api/employes')
+      .then(res => setEmployesData(res.data))
+      .catch(err => console.error("Erreur de chargement des employés :", err));
+  }, []);
 
   const handleAutoFill = useCallback((fields) => {
     setFormData(prev => ({
@@ -56,13 +63,15 @@ export default function FormPage() {
     setFormData(prev => {
       const base = { ...prev, Nom_Employe: nom };
       const emp = employesData.find(x => x.Nom_Employe.toLowerCase() === nom.toLowerCase());
-      return emp ? {
-        ...base,
-        ...emp,
-        Matricule_Employe: emp.Matricule_Employe,
-        Prenom_Employe: emp.Prenom_Employe,
-        DateConsultation: emp.DateConsultation?.split('T')[0] || ''
-      } : base;
+      return emp
+        ? {
+            ...base,
+            ...emp,
+            Matricule_Employe: emp.Matricule_Employe,
+            Prenom_Employe: emp.Prenom_Employe,
+            DateConsultation: emp.DateConsultation?.split('T')[0] || ''
+          }
+        : base;
     });
   }, [employesData]);
 
@@ -93,7 +102,7 @@ export default function FormPage() {
   }, [setFormList]);
 
   const generateExcelFile = useCallback(() => {
-    const filtered = formList.map(row => 
+    const filtered = formList.map(row =>
       EXPORT_FIELDS.reduce((acc, key) => ({ ...acc, [key]: row[key] || '' }), {})
     );
     const ws = XLSX.utils.json_to_sheet(filtered);
@@ -119,8 +128,6 @@ export default function FormPage() {
     <div className={styles.container}>
       <h1 className={styles.title}>Gestion Mutuelle</h1>
 
-      <FileUploader onDataLoaded={setEmployesData} fileTypes=".csv,.xlsx" />
-
       <OCRScanner onAutoFill={handleAutoFill} className={styles.ocrSection} />
 
       <ConsumptionForm
@@ -145,7 +152,7 @@ export default function FormPage() {
           Exporter vers Gmail
         </button>
         <button onClick={handleDeleteAll} className={styles.dangerButton}>
-          
+          Tout supprimer
         </button>
       </div>
     </div>
