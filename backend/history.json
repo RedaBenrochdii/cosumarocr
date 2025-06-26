@@ -1,0 +1,12 @@
+[
+  {
+    "filename": "1720160012345.png",
+    "commentaire": "Document mutuelle",
+    "autoFill": {
+      "Nom_Employe": "REDA",
+      "Montant": "700",
+      "Numero_Declaration": "1234",
+      "DateConsultation": "2025-06-24"
+    }
+  }
+]

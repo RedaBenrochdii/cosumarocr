@@ -58,10 +58,29 @@
     "Prenom_Employe": "Thomas",
     "Nom_Malade": "Robert",
     "Prenom_Malade": "Emma",
-    "Type_Malade": "Op\u00e9ration",
+    "Type_Malade": "Opération",
     "Montant": 200,
     "Montant_Rembourse": 150,
     "Code_Assurance": "ASS345",
-    "Age": 46
+    "Age": 46,
+    "Famille": [
+      {
+        "nom": "Petit",
+        "prenom": "marina",
+        "type": "conjoint"
+      }
+    ]
+  },
+  {
+    "Matricule_Employe": "EMP000",
+    "Nom_Employe": "benrouchdi",
+    "Prenom_Employe": "reda",
+    "Famille": [
+      {
+        "nom": "BENROUCHDI",
+        "prenom": "reda2",
+        "type": "enfant"
+      }
+    ]
   }
 ]

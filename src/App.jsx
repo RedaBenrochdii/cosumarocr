@@ -8,6 +8,7 @@ import DocumentsReceived from './pages/DocumentsReceived';
 import Home from './pages/Home';
 import PrivateRoute from './components/PrivateRoute';
 import './index.css';
+import ReclamationPage from './pages/ReclamationPage';
 
 const App = () => {
   const location = useLocation();
@@ -20,9 +21,11 @@ const App = () => {
         {!isLoginPage && <EmployeList />}
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+          <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
           <Route path="/form" element={<PrivateRoute><FormPage /></PrivateRoute>} />
           <Route path="/settings" element={<PrivateRoute><DocumentsReceived /></PrivateRoute>} />
+            <Route path="/reclamation" element={<PrivateRoute><ReclamationPage /></PrivateRoute>} /> {/* 👈 Ajout ici */}
+
         </Routes>
       </main>
     </div>

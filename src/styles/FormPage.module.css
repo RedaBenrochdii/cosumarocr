@@ -1,199 +1,253 @@
+/* ======================== */
+/* 🎨 Thème clair par défaut */
+/* ======================== */
+:root {
+  --clr-bg: #f3f6f9;
+  --clr-white: #ffffff;
+  --clr-text: #2d3748;
+  --clr-primary: #3182ce;
+  --clr-primary-dark: #2b6cb0;
+  --clr-success: #4caf50;
+  --clr-success-dark: #38a169;
+  --clr-danger: #e53e3e;
+  --clr-danger-dark: #c53030;
+  --clr-gray-light: #e2e8f0;
+  --clr-gray: #4a5568;
+  --trans-fast: 0.2s ease-out;
+  --trans-med: 0.4s ease;
+}
 
-/* ===================== Original CSS (ne rien supprimer) ===================== */
-.container {
-  display: flex;
-  flex-direction: column;
-  margin: 0 auto;
-  padding: 24px;
-  width: 100%;
-  max-width: 1280px;
-  box-sizing: border-box;
+/* ======================= */
+/* 🌙 Thème sombre activé */
+/* ======================= */
+body.dark-mode {
+  --clr-bg: #1c1c1c;
+  --clr-white: #2a2a2a;
+  --clr-text: #f5f5f5;
+  --clr-primary: #4caf50;
+  --clr-primary-dark: #3a9442;
+  --clr-success: #22c55e;
+  --clr-success-dark: #15803d;
+  --clr-danger: #ef4444;
+  --clr-danger-dark: #b91c1c;
+  --clr-gray-light: #4b5563;
+  --clr-gray: #e2e8f0;
+}
+
+body {
+  background-color: var(--clr-bg);
+  color: var(--clr-text);
   font-family: "Segoe UI", Roboto, sans-serif;
-  background-color: #f9fafb;
+  transition: all 0.3s ease;
 }
 
-/* ✅ Titre principal */
+/* ======================== */
+/* 📦 Conteneur principal  */
+/* ======================== */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--clr-bg);
+  color: var(--clr-text);
+  animation: fadeIn var(--trans-med);
+}
+
+/* =================== */
+/* 🧾 Titre principal */
+/* =================== */
 .title {
+  font-size: 2rem;
   text-align: center;
-  margin-bottom: 24px;
-  font-size: 32px;
-  color: #2d3748;
+  margin-bottom: 1.5rem;
+  color: var(--clr-text);
+  position: relative;
+}
+.title::after {
+  content: "";
+  display: block;
+  width: 4rem;
+  height: 0.25rem;
+  margin: 0.5rem auto 0;
+  background-color: var(--clr-primary);
+  border-radius: 2px;
+  animation: slideIn var(--trans-fast);
 }
 
-/* ✅ Formulaire aligné en grille fluide */
+/* ================ */
+/* 📝 Formulaire    */
+/* ================ */
 .form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin: 0;
-  padding: 16px;
-  background-color: #ffffff;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  padding: 1.5rem;
+  background-color: var(--clr-white);
   border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-/* ✅ Champs de formulaire */
 .form input,
 .form select {
-  flex: 1 1 240px;
-  padding: 10px 14px;
-  font-size: 15px;
-  border: 1px solid #cbd5e0;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  border: 1px solid var(--clr-gray-light);
   border-radius: 8px;
-  box-sizing: border-box;
-  background-color: white;
+  background-color: var(--clr-bg);
+  color: var(--clr-text);
 }
 
 .form input:focus,
 .form select:focus {
-  border-color: #3182ce;
+  border-color: var(--clr-primary);
   outline: none;
+  transform: scale(1.02);
 }
 
-/* ✅ Bouton du formulaire */
 .form button {
-  padding: 10px 24px;
-  font-size: 16px;
-  background-color: #3182ce;
-  color: white;
+  grid-column: 1/-1;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: var(--clr-primary);
+  color: var(--clr-white);
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: background-color var(--trans-fast), transform var(--trans-fast);
+  animation: pulse 5s infinite;
 }
 
 .form button:hover {
-  background-color: #2b6cb0;
+  background-color: var(--clr-primary-dark);
   transform: translateY(-2px);
 }
 
-/* ✅ Tableau */
+/* ========================== */
+/* 📊 Tableau + Conteneur     */
+/* ========================== */
+.scrollContainer {
+  overflow-x: auto;
+  margin-top: 2rem;
+}
+
 .table {
   width: 100%;
-  margin-top: 24px;
   border-collapse: collapse;
-  background-color: #ffffff;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+  background-color: var(--clr-white);
+  color: var(--clr-text);
   border-radius: 12px;
-  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .table th,
 .table td {
-  padding: 16px 20px;
-  font-size: 15px;
-  border-bottom: 1px solid #e2e8f0;
-  color: #4a5568;
-  transition: background-color 0.2s ease;
+  padding: 1rem 1.25rem;
+  text-align: left;
+  font-size: 0.95rem;
+  border-bottom: 1px solid var(--clr-gray-light);
 }
 
 .table th {
-  background-color: #f7fafc;
-  font-weight: bold;
-  color: #2d3748;
+  background-color: var(--clr-bg);
+  font-weight: 600;
 }
 
 .table tr:hover td {
   background-color: rgba(49,130,206,0.05);
 }
 
-/* ✅ Pagination */
+/* =============== */
+/* 📍 Pagination   */
+/* =============== */
 .pagination {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 16px;
-  margin-top: 20px;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
 .pagination button {
-  padding: 8px 16px;
-  font-size: 15px;
-  background-color: #3182ce;
-  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: var(--clr-primary);
+  color: var(--clr-white);
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: background-color var(--trans-fast), transform var(--trans-fast);
 }
 
 .pagination button:hover {
-  background-color: #2b6cb0;
-  transform: translateY(-1px);
+  background-color: var(--clr-primary-dark);
+  transform: translateY(-2px);
 }
 
-/* ✅ Bouton "Tout supprimer" */
+/* ======================= */
+/* 🧹 Bouton Supprimer Tout */
+/* ======================= */
 .deleteAllButton {
   display: block;
   margin: 32px auto 0;
   padding: 12px 24px;
   font-size: 16px;
-  background-color: #e53e3e;
-  color: white;
+  background-color: var(--clr-danger);
+  color: var(--clr-white);
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: background-color var(--trans-fast), transform var(--trans-fast);
 }
 
 .deleteAllButton:hover {
-  background-color: #c53030;
+  background-color: var(--clr-danger-dark);
   transform: translateY(-2px);
 }
 
-/* ✅ Bouton principal (Exporter) */
+/* ======================== */
+/* 📤 Bouton principal      */
+/* ======================== */
 .primaryButton {
-  margin-top: 16px;
   padding: 10px 24px;
-  background-color: #4CAF50;
-  color: white;
+  background-color: var(--clr-success);
+  color: var(--clr-white);
   border: none;
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: background-color var(--trans-fast), transform var(--trans-fast);
 }
 
 .primaryButton:hover {
-  background-color: #38a169;
+  background-color: var(--clr-success-dark);
   transform: translateY(-2px);
 }
 
-/* ✅ Actions (ligne boutons) */
+/* ======================= */
+/* ⚙️ Actions générales */
+/* ======================= */
 .actions {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 16px;
   margin-top: 24px;
 }
 
-/* ✅ Conteneur scroll si nécessaire */
-.scrollContainer {
-  overflow-x: auto;
-  margin-top: 24px;
-}
-
-/* ===================== Ajouts pour animations et Tailwind ===================== */
-/* Exemple d'utilisation de Tailwind via @apply, sans supprimer le CSS existant */
-/* .container {
-     @apply bg-gray-50;
-   }
-*/
-
+/* =================== */
+/* 🌀 Animations      */
+/* =================== */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.container {
-  animation: fadeIn 0.5s ease-out;
+@keyframes slideIn {
+  from { width: 0; }
+  to   { width: 4rem; }
 }
 
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-}
-
-.form button {
-  animation: pulse 3s infinite;
+  50%     { transform: scale(1.02); }
 }

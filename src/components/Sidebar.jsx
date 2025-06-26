@@ -33,6 +33,11 @@ const Sidebar = () => {
             Formulaire
           </NavLink>
         </li>
+         <li>
+    <NavLink to="/reclamation" className={({ isActive }) => (isActive ? styles.active : undefined)}>
+      Réclamation
+    </NavLink>
+  </li>
       </ul>
 
       
