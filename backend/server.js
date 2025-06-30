@@ -1,10 +1,21 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+if (!process.env.GEMINI_API_KEY) {
+  console.error("❌ Clé Gemini manquante dans .env");
+  process.exit(1);
+}
+
+import { poolPromise } from './config/db.js';
+
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs-extra';
 import path from 'path';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
-import uploadRoute from './routes/uploadRoute.js'; // note bien le `.js`
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import uploadRoute from './routes/uploadRoute.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,101 +23,75 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = 4000;
 
-// =====================
-// 🔐 Middlewares globaux
-// =====================
+const EMPLOYES_FILE = path.join(__dirname, 'data', 'employes.json');
+const DATA_FILE = path.join(__dirname, 'documents.json');
+const uploadDir = path.join(__dirname, 'uploads');
+fs.ensureDirSync(uploadDir);
+
+// 🔐 Middlewares
 app.use(cors());
 app.use(express.json());
 app.use('/api', uploadRoute);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(uploadDir));
 
-// =====================
-// 🔐 Authentification simple
-// =====================
+// 🔐 Auth simple
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   if (username === 'admin' && password === 'reda@2025') {
-    return res.status(200).json({ success: true, token: 'token123' });
+    return res.status(200).json({ success: true, token: '...token...' });
   } else {
-    return res.status(401).json({ success: false, message: 'Identifiants invalides' });
+    return res.status(401).json({ success: false, message: "Identifiants invalides" });
   }
 });
 
-// =====================
-// 👥 GET employés
-// =====================
-const EMPLOYES_FILE = path.join(__dirname, 'data', 'employes.json');
 
+// 👥 Gestion employés (fichier JSON)
 app.get('/api/employes', (req, res) => {
   try {
     const data = fs.readFileSync(EMPLOYES_FILE, 'utf-8');
-    const employes = JSON.parse(data);
-    res.json(employes);
+    res.json(JSON.parse(data));
   } catch (error) {
-    res.status(500).json({ error: 'Erreur lors de la lecture du fichier JSON' });
+    res.status(500).json({ error: 'Erreur lecture employés' });
   }
 });
 
-// =====================
-// 💾 POST mise à jour des employés
-// =====================
 app.post('/api/employes/update', (req, res) => {
   try {
-    const backupPath = EMPLOYES_FILE.replace('.json', '.bak.json');
-
-    // ✅ Créer une sauvegarde avant d'écraser le fichier
-    if (fs.existsSync(EMPLOYES_FILE)) {
-      fs.copyFileSync(EMPLOYES_FILE, backupPath);
-    }
-
-    // ✅ Écriture sécurisée
+    const backup = EMPLOYES_FILE.replace('.json', '.bak.json');
+    if (fs.existsSync(EMPLOYES_FILE)) fs.copyFileSync(EMPLOYES_FILE, backup);
     fs.writeFileSync(EMPLOYES_FILE, JSON.stringify(req.body, null, 2), 'utf-8');
-
-    res.status(200).json({ success: true, message: 'Employés mis à jour avec sauvegarde' });
-  } catch (error) {
-    console.error('❌ Erreur mise à jour employés:', error);
-    res.status(500).json({ success: false, error: 'Erreur lors de la mise à jour avec sauvegarde' });
+    res.json({ success: true, message: 'Employés mis à jour avec sauvegarde' });
+  } catch (err) {
+    console.error('❌ Erreur mise à jour :', err);
+    res.status(500).json({ success: false, error: 'Échec sauvegarde' });
   }
 });
 
-
-// =====================
-// 📥 UPLOAD de documents
-// =====================
-const DATA_FILE = path.join(__dirname, 'documents.json');
-
+// 📥 Upload documents
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (_, file, cb) => {
-    const timestamp = Date.now();
-    const ext = path.extname(file.originalname);
-    cb(null, `${timestamp}${ext}`);
-  }
+  destination: (_, __, cb) => cb(null, uploadDir),
+  filename: (_, file, cb) => cb(null, `${Date.now()}${path.extname(file.originalname)}`)
 });
 const upload = multer({ storage });
 
 app.post('/upload', upload.single('photo'), async (req, res) => {
   try {
-    const data = {
+    const doc = {
       filename: req.file.filename,
       commentaire: req.body.commentaire,
       date: new Date().toISOString()
     };
-
-    const fileData = fs.existsSync(DATA_FILE) ? await fs.readJson(DATA_FILE) : [];
-    fileData.push(data);
-    await fs.writeJson(DATA_FILE, fileData, { spaces: 2 });
-
-    res.status(200).json({ success: true, message: 'Document reçu' });
-  } catch (error) {
-    console.error('Erreur:', error);
-    res.status(500).json({ success: false, error: 'Erreur interne' });
+    const oldData = fs.existsSync(DATA_FILE) ? await fs.readJson(DATA_FILE) : [];
+    oldData.push(doc);
+    await fs.writeJson(DATA_FILE, oldData, { spaces: 2 });
+    res.json({ success: true, message: 'Document reçu' });
+  } catch (err) {
+    console.error('❌ Erreur upload :', err);
+    res.status(500).json({ success: false, error: 'Erreur serveur' });
   }
 });
 
-// =====================
-// 📂 Lister les documents
-// =====================
+// 📂 Lister documents
 app.get('/documents', async (_, res) => {
   try {
     const data = await fs.readJson(DATA_FILE);
@@ -116,16 +101,79 @@ app.get('/documents', async (_, res) => {
   }
 });
 
-// =====================
-// 🏠 Test de vie
-// =====================
-app.get('/', (req, res) => {
-  res.send('✅ Backend fusionné opérationnel');
+// 🤖 OCR via Gemini
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+app.post('/api/ocr/gemini', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'Aucun fichier reçu' });
+
+    const filePath = path.join(uploadDir, req.file.filename);
+    const base64 = await fs.readFile(filePath, { encoding: 'base64' });
+    const mimeType = req.file.mimetype;
+
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+    const prompt = `Voici un document de mutuelle. Extrais les champs suivants (s'il y en a) sous forme d'objet JSON :
+- Matricule_Employe
+- Nom_Employe
+- Prenom_Employe
+- Nom_Malade
+- Prenom_Malade
+- Type_Malade
+- Montant
+- Montant_Rembourse
+- Code_Assurance
+- Numero_Declaration
+- DateConsultation
+
+Formate la réponse uniquement en JSON.`;
+
+    const result = await model.generateContent([
+      { text: prompt },
+      { inlineData: { data: base64, mimeType } }
+    ]);
+
+    const text = result.response.text();
+    console.log('🧠 Réponse Gemini :', text);
+
+    const jsonStart = text.indexOf('{');
+    const jsonEnd = text.lastIndexOf('}');
+    if (jsonStart === -1 || jsonEnd === -1) {
+      return res.status(200).json({ error: "Réponse non conforme", texte: text });
+    }
+
+    try {
+      const jsonClean = text.substring(jsonStart, jsonEnd + 1);
+      const extracted = JSON.parse(jsonClean);
+      res.json(extracted);
+    } catch (parseErr) {
+      console.error('❌ Erreur parsing JSON :', parseErr);
+      res.status(500).json({ error: 'Erreur parsing Gemini', texte: text });
+    }
+
+  } catch (err) {
+    console.error('❌ Erreur Gemini OCR :', err);
+    res.status(500).json({ error: 'Erreur OCR Gemini' });
+  }
 });
 
-// =====================
-// 🚀 Lancement serveur
-// =====================
+// ✅ NOUVELLE ROUTE SQL SERVER
+app.get('/api/employes-sql', async (req, res) => {
+  try {
+    const pool = await poolPromise;
+    const result = await pool.request().query('SELECT * FROM Employes'); // ← adapte ce nom si besoin
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('❌ Erreur SQL Server :', err);
+    res.status(500).json({ error: 'Erreur SQL Server' });
+  }
+});
+
+// 🏠 Test backend
+app.get('/', (_, res) => res.send('✅ Backend fusionné opérationnel'));
+
+// 🚀 Serveur
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`✅ Serveur backend disponible sur http://localhost:${PORT} ou via IP locale`);
+  console.log(`✅ Serveur backend sur http://localhost:${PORT}`);
 });

@@ -96,6 +96,18 @@
     ]
   },
   {
+    "Matricule_Employe": "777",
+    "Nom_Employe": "BERACHD",
+    "Prenom_Employe": "AYOB",
+    "Famille": [
+      {
+        "nom": "BERACHD",
+        "prenom": "DAVID",
+        "type": "enfant"
+      }
+    ]
+  },
+  {
     "Matricule_Employe": "TETS",
     "Nom_Employe": "TEST",
     "Prenom_Employe": "",
