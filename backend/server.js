@@ -1,3 +1,4 @@
+import sql from 'mssql';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -37,17 +38,16 @@ app.use('/uploads', express.static(uploadDir));
 // 🔐 Auth simple
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
-  if (username === 'admin' && password === 'reda@2025') {
-    return res.status(200).json({ success: true, token: '...token...' });
+  if (username === 'admin' && password === 'cosum@2025') {
+    res.status(200).json({ success: true, token: 'token123' });
   } else {
-    return res.status(401).json({ success: false, message: "Identifiants invalides" });
+    res.status(401).json({ success: false, message: 'Identifiants invalides' });
   }
 });
 
-
 // 👥 Gestion employés (fichier JSON)
-app.get('/api/employes', (req, res) => {
-  try {
+/*app.get('/api/employes', (req, res) => {
+  try {t
     const data = fs.readFileSync(EMPLOYES_FILE, 'utf-8');
     res.json(JSON.parse(data));
   } catch (error) {
@@ -66,7 +66,7 @@ app.post('/api/employes/update', (req, res) => {
     res.status(500).json({ success: false, error: 'Échec sauvegarde' });
   }
 });
-
+*/
 // 📥 Upload documents
 const storage = multer.diskStorage({
   destination: (_, __, cb) => cb(null, uploadDir),
@@ -169,6 +169,28 @@ app.get('/api/employes-sql', async (req, res) => {
     res.status(500).json({ error: 'Erreur SQL Server' });
   }
 });
+
+// 📌 Récupérer UN employé par matricule (depuis SQL Server)
+app.get('/api/employes/:matricule', async (req, res) => {
+  const { matricule } = req.params;
+  try {
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input('matricule', sql.VarChar, matricule)
+      .query('SELECT * FROM Employes WHERE Matricule_Employe = @matricule');
+
+    if (result.recordset.length === 0) {
+      return res.status(404).json({ error: 'Aucun employé trouvé' });
+    }
+
+    res.json(result.recordset[0]);
+  } catch (err) {
+    console.error('❌ Erreur SQL employé matricule :', err); // <--- ajoute ceci
+    res.status(500).json({ error: 'Erreur SQL' });
+  }
+});
+
 
 // 🏠 Test backend
 app.get('/', (_, res) => res.send('✅ Backend fusionné opérationnel'));
