@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import styles from '../styles/DocumentsReceived.module.css';
 import Logo from '../assets/cosumar-logo.png';
 
 const API_BASE = 'http://localhost:4000';
@@ -15,45 +16,88 @@ export default function DocumentsReceived() {
   }, []);
 
   const docsFiltres = search
-    ? documents.filter(doc =>
-        doc.nom && doc.nom.toLowerCase().includes(search.toLowerCase())
+    ? documents.filter((doc) =>
+        (doc.commentaire && doc.commentaire.toLowerCase().includes(search.toLowerCase())) ||
+        (doc.filename && doc.filename.toLowerCase().includes(search.toLowerCase()))
       )
     : documents;
 
-  return (
-    
-    <div className="p-6">
-      <h1 className="text-3xl font-bold text-[#005eb8] mb-4">📥 Documents reçus</h1>
-      <input
-        type="text"
-        placeholder="Rechercher..."
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-        className="mb-6 p-2 border border-blue-200 rounded w-full max-w-sm"
-      />
+  const handleAddToHistory = async (doc) => {
+    try {
+      const payload = {
+        filename: doc.filename,
+        commentaire: doc.commentaire,
+        autoFill: doc.autoFill || {}, // si tu as des données préremplies OCR
+      };
 
-      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {docsFiltres.map((doc, idx) => (
-          <div key={doc.filename} className="border rounded-lg shadow p-4 bg-white">
-            <img
-              src={`${API_BASE}/uploads/${doc.filename}`}
-              alt={doc.filename}
-              className="w-full h-48 object-cover rounded"
-            />
-            <p className="mt-2 font-semibold text-[#005eb8]">Commentaire :</p>
-            <p>{doc.commentaire}</p>
-            <p className="text-sm text-gray-600 mt-1">Date : {new Date(doc.date).toLocaleString('fr-FR')}</p>
-            <a
-              href={`${API_BASE}/uploads/${doc.filename}`}
-              download
-              className="inline-block mt-3 px-4 py-2 bg-[#005eb8] text-white rounded text-sm"
-            >
-              Télécharger
-            </a>
-          </div>
-          
-        ))}
+      const res = await fetch(`${API_BASE}/api/history`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error('Erreur ajout historique');
+      alert('✅ Ajouté à l’historique avec succès.');
+    } catch (err) {
+      console.error(err);
+      alert('❌ Erreur lors de l’ajout à l’historique.');
+    }
+  };
+
+  return (
+    <div className={styles.pageContainer}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>📥 Documents reçus</h1>
+        <input
+          type="text"
+          placeholder="🔎 Rechercher un nom..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className={styles.searchInput}
+        />
       </div>
+
+      {docsFiltres.length > 0 ? (
+        <div className={styles.grid}>
+          {docsFiltres.map((doc) => (
+            <div key={doc.filename} className={styles.card}>
+              <div className={styles.cardImageWrapper}>
+                <img
+                  src={`${API_BASE}/uploads/${doc.filename}`}
+                  alt={doc.filename}
+                  className={styles.image}
+                />
+              </div>
+              <div className={styles.cardContent}>
+                <p className={styles.commentaire}>📝 {doc.commentaire}</p>
+                <p className={styles.date}>📅 {new Date(doc.date).toLocaleString('fr-FR')}</p>
+
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <a
+                    href={`${API_BASE}/uploads/${doc.filename}`}
+                    download
+                    className={styles.downloadBtn}
+                  >
+                    ⬇️ Télécharger
+                  </a>
+
+                  <button
+                    onClick={() => handleAddToHistory(doc)}
+                    className={styles.downloadBtn}
+                    style={{ backgroundColor: '#22c55e' }}
+                  >
+                    ➕ Ajouter à l’historique
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className={styles.emptyContainer}>
+          <p className={styles.emptyText}>Aucun document trouvé pour cette recherche.</p>
+        </div>
+      )}
     </div>
   );
 }

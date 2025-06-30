@@ -8,7 +8,7 @@ import DocumentsReceived from './pages/DocumentsReceived';
 import Home from './pages/Home';
 import PrivateRoute from './components/PrivateRoute';
 import './index.css';
-import ReclamationPage from './pages/ReclamationPage';
+import ReclamationPage from './pages/ProductPage';
 
 const App = () => {
   const location = useLocation();

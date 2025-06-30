@@ -1,253 +1,366 @@
-/* ======================== */
-/* 🎨 Thème clair par défaut */
-/* ======================== */
+/* ===================================================================== */
+/* 🎨 Global Variables & Theming - Professional & Modern Aesthetics */
+/* ===================================================================== */
+
 :root {
-  --clr-bg: #f3f6f9;
-  --clr-white: #ffffff;
-  --clr-text: #2d3748;
-  --clr-primary: #3182ce;
-  --clr-primary-dark: #2b6cb0;
-  --clr-success: #4caf50;
-  --clr-success-dark: #38a169;
-  --clr-danger: #e53e3e;
-  --clr-danger-dark: #c53030;
-  --clr-gray-light: #e2e8f0;
-  --clr-gray: #4a5568;
-  --trans-fast: 0.2s ease-out;
-  --trans-med: 0.4s ease;
+  /* Colors - Light Theme */
+  --clr-bg-page: #f9fafb; /* Lighter background for a fresh feel */
+  --clr-bg-card: #ffffff; /* White cards */
+  --clr-text-main: #1f2937; /* Darker text for readability */
+  --clr-text-secondary: #4b5563; /* Subtler text for descriptions/hints */
+  --clr-primary: #3b82f6; /* Modern blue */
+  --clr-primary-dark: #2563eb;
+  --clr-success: #10b981; /* Fresh green */
+  --clr-success-dark: #059669;
+  --clr-danger: #ef4444; /* Standard red */
+  --clr-danger-dark: #dc2626;
+  --clr-border: #e5e7eb; /* Light border color */
+  --clr-input-bg: #f3f4f6; /* Subtle input background */
+  --clr-focus-ring: rgba(59, 130, 246, 0.4); /* Focus ring based on primary */
+
+  /* Shadows - More sophisticated */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+
+  /* Transitions */
+  --trans-ease-out: 0.2s ease-out;
+  --trans-ease-in-out: 0.3s ease-in-out;
+  --trans-long: 0.5s ease;
+
+  /* Border Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
 }
 
-/* ======================= */
-/* 🌙 Thème sombre activé */
-/* ======================= */
+/* Dark Mode Overrides */
 body.dark-mode {
-  --clr-bg: #1c1c1c;
-  --clr-white: #2a2a2a;
-  --clr-text: #f5f5f5;
-  --clr-primary: #4caf50;
-  --clr-primary-dark: #3a9442;
-  --clr-success: #22c55e;
-  --clr-success-dark: #15803d;
+  --clr-bg-page: #1f2937;
+  --clr-bg-card: #374151;
+  --clr-text-main: #f9fafb;
+  --clr-text-secondary: #d1d5db;
+  --clr-primary: #60a5fa; /* Lighter blue for dark mode */
+  --clr-primary-dark: #3b82f6;
+  --clr-success: #34d399;
+  --clr-success-dark: #10b981;
   --clr-danger: #ef4444;
-  --clr-danger-dark: #b91c1c;
-  --clr-gray-light: #4b5563;
-  --clr-gray: #e2e8f0;
+  --clr-danger-dark: #dc2626;
+  --clr-border: #4b5563;
+  --clr-input-bg: #4c5a6d; /* Darker input background */
+  --clr-focus-ring: rgba(96, 165, 250, 0.4);
 }
 
+/* Base Styles */
 body {
-  background-color: var(--clr-bg);
-  color: var(--clr-text);
-  font-family: "Segoe UI", Roboto, sans-serif;
-  transition: all 0.3s ease;
+  background-color: var(--clr-bg-page);
+  color: var(--clr-text-main);
+  font-family: 'Inter', 'Segoe UI', Roboto, sans-serif; /* Added Inter for a modern touch, ensure it's imported or available */
+  -webkit-font-smoothing: antialiased; /* Smoother font rendering */
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--trans-ease-in-out), color var(--trans-ease-in-out);
+  line-height: 1.6; /* Improved readability */
+  margin: 0;
+  padding: 0;
 }
 
 /* ======================== */
-/* 📦 Conteneur principal  */
+/* 📦 Main Container      */
 /* ======================== */
 .container {
-  max-width: 1280px;
+  max-width: 1200px; /* Slightly adjusted max-width */
   margin: 0 auto;
-  padding: 2rem;
-  background-color: var(--clr-bg);
-  color: var(--clr-text);
-  animation: fadeIn var(--trans-med);
+  padding: 2.5rem 1.5rem; /* More vertical padding */
+  background-color: var(--clr-bg-page); /* Maintain page background */
+  color: var(--clr-text-main);
+  animation: fadeIn var(--trans-long);
 }
 
 /* =================== */
-/* 🧾 Titre principal */
+/* 🧾 Main Title      */
 /* =================== */
 .title {
-  font-size: 2rem;
+  font-size: 2.5rem; /* Slightly larger title */
+  font-weight: 700; /* Bolder */
   text-align: center;
-  margin-bottom: 1.5rem;
-  color: var(--clr-text);
+  margin-bottom: 2rem; /* More space below title */
+  color: var(--clr-text-main);
   position: relative;
+  letter-spacing: -0.025em; /* Subtle letter spacing */
 }
 .title::after {
   content: "";
   display: block;
-  width: 4rem;
-  height: 0.25rem;
-  margin: 0.5rem auto 0;
+  width: 5rem; /* Slightly wider underline */
+  height: 0.3rem; /* Thicker underline */
+  margin: 0.75rem auto 0;
   background-color: var(--clr-primary);
-  border-radius: 2px;
-  animation: slideIn var(--trans-fast);
+  border-radius: 3px; /* Slightly rounded */
+  animation: slideIn var(--trans-ease-out);
 }
 
 /* ================ */
-/* 📝 Formulaire    */
+/* 📝 Form Section */
 /* ================ */
 .form {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-  padding: 1.5rem;
-  background-color: var(--clr-white);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Wider minmax for inputs */
+  gap: 1.5rem; /* Increased gap */
+  padding: 2rem; /* More padding inside the form card */
+  background-color: var(--clr-bg-card);
+  border-radius: var(--radius-lg); /* Larger border radius for a softer look */
+  box-shadow: var(--shadow-md); /* Use medium shadow */
 }
 
 .form input,
 .form select {
-  padding: 0.75rem 1rem;
-  font-size: 0.95rem;
-  border: 1px solid var(--clr-gray-light);
-  border-radius: 8px;
-  background-color: var(--clr-bg);
-  color: var(--clr-text);
+  width: 100%; /* Ensure full width */
+  padding: 0.85rem 1.1rem; /* Slightly more padding */
+  font-size: 1rem; /* Slightly larger font size */
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md); /* Consistent border radius */
+  background-color: var(--clr-input-bg);
+  color: var(--clr-text-main);
+  transition: all var(--trans-ease-out);
+  appearance: none; /* Reset default select styles */
 }
 
 .form input:focus,
 .form select:focus {
   border-color: var(--clr-primary);
   outline: none;
-  transform: scale(1.02);
+  box-shadow: 0 0 0 3px var(--clr-focus-ring); /* Modern focus ring */
+  transform: translateY(-1px); /* Subtle lift on focus */
+}
+
+.form input::placeholder,
+.form select::placeholder { /* Style placeholders */
+  color: var(--clr-text-secondary);
+  opacity: 0.7;
+}
+
+/* Style for datalist input to align with others */
+input[list] {
+  padding-right: 1.1rem; /* Adjust for potential dropdown arrow space */
 }
 
 .form button {
   grid-column: 1/-1;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
+  padding: 1rem 2rem; /* More generous padding */
+  font-size: 1.1rem; /* Larger text */
   font-weight: 600;
   background-color: var(--clr-primary);
-  color: var(--clr-white);
+  color: var(--clr-bg-card); /* Use card background for white text */
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background-color var(--trans-fast), transform var(--trans-fast);
-  animation: pulse 5s infinite;
+  transition: all var(--trans-ease-out);
+  animation: pulse 5s infinite cubic-bezier(0.4, 0, 0.6, 1); /* Smoother pulse */
+  box-shadow: var(--shadow-sm); /* Subtle button shadow */
 }
 
 .form button:hover {
   background-color: var(--clr-primary-dark);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-md); /* Enhance shadow on hover */
 }
 
-/* ========================== */
-/* 📊 Tableau + Conteneur     */
-/* ========================== */
+.form button:active {
+  transform: translateY(0);
+  background-color: var(--clr-primary); /* Revert to primary on active */
+  box-shadow: var(--shadow-sm); /* Revert shadow on active */
+}
+
+/* ================================== */
+/* 📊 Table & Scroll Container     */
+/* ================================== */
 .scrollContainer {
   overflow-x: auto;
-  margin-top: 2rem;
+  margin-top: 3rem; /* More space above table */
+  border-radius: var(--radius-lg); /* Match form border radius */
+  box-shadow: var(--shadow-md); /* Consistent shadow */
 }
 
 .table {
   width: 100%;
-  border-collapse: collapse;
-  background-color: var(--clr-white);
-  color: var(--clr-text);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-collapse: separate; /* Allows border-radius on cells/rows */
+  border-spacing: 0; /* Remove default spacing */
+  background-color: var(--clr-bg-card);
+  color: var(--clr-text-main);
+  border-radius: var(--radius-lg);
+  overflow: hidden; /* Ensure border-radius applies */
 }
 
 .table th,
 .table td {
-  padding: 1rem 1.25rem;
+  padding: 1.2rem 1.5rem; /* More generous padding for table cells */
   text-align: left;
   font-size: 0.95rem;
-  border-bottom: 1px solid var(--clr-gray-light);
+  border-bottom: 1px solid var(--clr-border);
 }
 
 .table th {
-  background-color: var(--clr-bg);
+  background-color: var(--clr-input-bg); /* Use input background for header */
   font-weight: 600;
+  color: var(--clr-text-secondary); /* Lighter color for table headers */
+  position: sticky; /* Make headers sticky on scroll */
+  top: 0;
+  z-index: 1; /* Ensure headers are above content */
 }
 
+/* Apply border-radius to specific corners of the first/last cells in the header row */
+.table thead tr:first-child th:first-child {
+  border-top-left-radius: var(--radius-lg);
+}
+.table thead tr:first-child th:last-child {
+  border-top-right-radius: var(--radius-lg);
+}
+.table tbody tr:last-child td {
+  border-bottom: none; /* No border for the last row */
+}
+
+
 .table tr:hover td {
-  background-color: rgba(49,130,206,0.05);
+  background-color: rgba(59, 130, 246, 0.07); /* Lighter hover effect */
 }
 
 /* =============== */
-/* 📍 Pagination   */
+/* 📍 Pagination   */
 /* =============== */
 .pagination {
   display: flex;
   justify-content: center;
-  gap: 1rem;
-  margin-top: 2rem;
+  gap: 1.2rem; /* Slightly increased gap */
+  margin-top: 3rem; /* More space above pagination */
 }
 
 .pagination button {
-  padding: 10px 20px;
-  font-size: 16px;
+  padding: 12px 24px; /* Slightly larger buttons */
+  font-size: 1rem;
   background-color: var(--clr-primary);
-  color: var(--clr-white);
+  color: var(--clr-bg-card);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background-color var(--trans-fast), transform var(--trans-fast);
+  transition: all var(--trans-ease-out);
+  box-shadow: var(--shadow-sm);
 }
 
 .pagination button:hover {
   background-color: var(--clr-primary-dark);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.pagination button:disabled {
+  background-color: var(--clr-border);
+  color: var(--clr-text-secondary);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 /* ======================= */
-/* 🧹 Bouton Supprimer Tout */
+/* 🧹 Delete All Button  */
 /* ======================= */
 .deleteAllButton {
   display: block;
-  margin: 32px auto 0;
-  padding: 12px 24px;
-  font-size: 16px;
+  margin: 2.5rem auto 0; /* More balanced margin */
+  padding: 14px 28px; /* Larger padding */
+  font-size: 1.1rem;
   background-color: var(--clr-danger);
-  color: var(--clr-white);
+  color: var(--clr-bg-card);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background-color var(--trans-fast), transform var(--trans-fast);
+  transition: all var(--trans-ease-out);
+  box-shadow: var(--shadow-sm);
 }
 
 .deleteAllButton:hover {
   background-color: var(--clr-danger-dark);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 /* ======================== */
-/* 📤 Bouton principal      */
+/* 📤 Primary Action Button */
 /* ======================== */
 .primaryButton {
-  padding: 10px 24px;
+  padding: 12px 28px;
   background-color: var(--clr-success);
-  color: var(--clr-white);
+  color: var(--clr-bg-card);
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
   cursor: pointer;
-  transition: background-color var(--trans-fast), transform var(--trans-fast);
+  transition: all var(--trans-ease-out);
+  box-shadow: var(--shadow-sm);
 }
 
 .primaryButton:hover {
   background-color: var(--clr-success-dark);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 /* ======================= */
-/* ⚙️ Actions générales */
+/* ⚙️ General Actions Flex */
 /* ======================= */
 .actions {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 16px;
-  margin-top: 24px;
+  gap: 1.2rem; /* Consistent gap */
+  margin-top: 2.5rem; /* Consistent margin */
 }
 
 /* =================== */
-/* 🌀 Animations      */
+/* 🌀 Animations      */
 /* =================== */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(15px); } /* Slightly larger initial translate */
   to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideIn {
   from { width: 0; }
-  to   { width: 4rem; }
+  to { width: 5rem; }
 }
 
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
-  50%     { transform: scale(1.02); }
+  50% { transform: scale(1.01); } /* More subtle pulse */
+}
+
+/* Optional: Add a toggle switch for dark mode if you don't have one */
+.theme-toggle {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 1000;
+  background-color: var(--clr-bg-card);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: 0.5rem;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: background-color var(--trans-ease-out);
+}
+.theme-toggle button {
+  background: none;
+  border: none;
+  color: var(--clr-text-main);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--trans-ease-out), color var(--trans-ease-out);
+}
+.theme-toggle button:hover {
+  background-color: var(--clr-input-bg);
+}
+.theme-toggle button.active {
+  background-color: var(--clr-primary);
+  color: white;
 }

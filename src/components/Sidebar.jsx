@@ -35,7 +35,7 @@ const Sidebar = () => {
         </li>
          <li>
     <NavLink to="/reclamation" className={({ isActive }) => (isActive ? styles.active : undefined)}>
-      Réclamation
+      Production
     </NavLink>
   </li>
       </ul>

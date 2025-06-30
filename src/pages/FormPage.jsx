@@ -7,7 +7,6 @@ import { ConsumptionForm } from '../components/ConsumptionForm';
 import { DataTable } from '../components/DataTable';
 import OCRScanner from '../components/OCRScanner';
 import styles from '../styles/FormPage.module.css';
-import SmartUploader from '../components/SmartUploader';
 
 const INITIAL_FORM_STATE = {
   DateConsultation: '',
@@ -27,28 +26,62 @@ const INITIAL_FORM_STATE = {
 const EXPORT_FIELDS = Object.keys(INITIAL_FORM_STATE);
 
 export default function FormPage() {
-  const [employesData, setEmployesData] = useState([]);
   const [formData, setFormData] = useState(INITIAL_FORM_STATE);
   const [formList, setFormList] = useLocalStorage('formList', []);
   const [showCalc, setShowCalc] = useState(false);
   const [calcInput, setCalcInput] = useState('');
-  const [alertDate, setAlertDate] = useState('');
-  const [blockSubmit, setBlockSubmit] = useState(false);
-
-  const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem('darkMode') === 'true';
-  });
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
+  const [isDateValid, setIsDateValid] = useState(true);
 
   useEffect(() => {
     document.body.classList.toggle('dark-mode', darkMode);
     localStorage.setItem('darkMode', darkMode.toString());
   }, [darkMode]);
 
-  useEffect(() => {
-    axios.get('http://localhost:4000/api/employes')
-      .then(res => setEmployesData(res.data))
-      .catch(err => console.error('Erreur chargement employés :', err));
+  const updateFormData = useCallback((key, value) => {
+    setFormData(prev => ({ ...prev, [key]: value }));
   }, []);
+
+  const handleMatriculeChange = useCallback(async (e) => {
+    const value = e.target.value;
+    updateFormData('Matricule_Employe', value);
+
+    if (value.trim() !== '') {
+      try {
+        const res = await axios.get(`http://localhost:4000/api/employes/${value}`);
+        const emp = res.data;
+        if (emp) {
+          setFormData(prev => ({
+            ...prev,
+            Matricule_Employe: emp.Matricule_Employe || prev.Matricule_Employe,
+            Nom_Employe: emp.Nom_Employe || '',
+            Prenom_Employe: emp.Prenom_Employe || ''
+          }));
+        }
+      } catch (error) {
+        console.error('Erreur chargement employé :', error);
+      }
+    }
+  }, [updateFormData]);
+
+  const handleChange = useCallback(e => {
+    const { name, value } = e.target;
+    updateFormData(name, value);
+
+    if (name === 'DateConsultation') {
+      const inputDate = new Date(value);
+      const today = new Date();
+      const threeMonthsAgo = new Date();
+      threeMonthsAgo.setMonth(today.getMonth() - 3);
+
+      if (inputDate < threeMonthsAgo) {
+        setIsDateValid(false);
+        alert("⚠️ Le dossier dépasse 3 mois, il pourrait être rejeté. Veuillez vérifier la date.");
+      } else {
+        setIsDateValid(true);
+      }
+    }
+  }, [updateFormData]);
 
   const handleAutoFill = useCallback(fields => {
     setFormData(prev => ({
@@ -59,62 +92,12 @@ export default function FormPage() {
     }));
   }, []);
 
-  const updateFormData = useCallback((key, value) => {
-    setFormData(prev => ({ ...prev, [key]: value }));
-  }, []);
-
-  const autoFillFromEmploye = useCallback((field, value) => {
-    const emp = employesData.find(x => x[field]?.toLowerCase() === value.toLowerCase());
-    if (emp) {
-      setFormData(prev => ({
-        ...prev,
-        ...emp,
-        DateConsultation: emp.DateConsultation?.split('T')[0] || prev.DateConsultation
-      }));
-    }
-  }, [employesData]);
-
-  const handleMatriculeChange = useCallback(e => {
-    const value = e.target.value;
-    updateFormData('Matricule_Employe', value);
-    autoFillFromEmploye('Matricule_Employe', value);
-  }, [autoFillFromEmploye, updateFormData]);
-
-  const handleNomChange = useCallback(e => {
-    const value = e.target.value;
-    updateFormData('Nom_Employe', value);
-    autoFillFromEmploye('Nom_Employe', value);
-  }, [autoFillFromEmploye, updateFormData]);
-
-  const handleChange = useCallback(e => {
-    const { name, value } = e.target;
-    updateFormData(name, value);
-
-    // 🚨 Vérifie la date de consultation
-    if (name === 'DateConsultation') {
-      const inputDate = new Date(value);
-      const now = new Date();
-      const diff = (now - inputDate) / (1000 * 60 * 60 * 24); // en jours
-
-      if (diff > 90) {
-        setAlertDate('⚠️ La date dépasse 3 mois.');
-        setBlockSubmit(true);
-      } else {
-        setAlertDate('');
-        setBlockSubmit(false);
-      }
-    }
-  }, [updateFormData]);
-
   const handleSubmit = useCallback(e => {
     e.preventDefault();
-    if (blockSubmit) {
-      alert('❌ Impossible d’enregistrer : la date dépasse 3 mois.');
-      return;
-    }
     setFormList(prev => [...prev, formData]);
     setFormData(INITIAL_FORM_STATE);
-  }, [formData, setFormList, blockSubmit]);
+    setIsDateValid(true);
+  }, [formData, setFormList]);
 
   const handleDelete = useCallback(idx => {
     setFormList(prev => prev.filter((_, i) => i !== idx));
@@ -176,26 +159,11 @@ export default function FormPage() {
       <ConsumptionForm
         formData={formData}
         onMatriculeChange={handleMatriculeChange}
-        onNomChange={handleNomChange}
+        onNomChange={handleChange}
         onChange={handleChange}
         onSubmit={handleSubmit}
-        dependents={employesData}
-        showDateWarning={!!alertDate}
+        isDateValid={isDateValid}
       />
-
-      {/* Notification Date */}
-      {alertDate && (
-        <div style={{
-          marginTop: '10px',
-          padding: '12px',
-          backgroundColor: '#fff3cd',
-          color: '#856404',
-          border: '1px solid #ffeeba',
-          borderRadius: '6px'
-        }}>
-          {alertDate}
-        </div>
-      )}
 
       <div style={{ marginTop: '1rem' }}>
         <button
@@ -293,7 +261,7 @@ export default function FormPage() {
           onClick={handleDeleteAll}
           className={styles.dangerButton}
         >
-          Tout supprimer
+        
         </button>
       </div>
     </div>

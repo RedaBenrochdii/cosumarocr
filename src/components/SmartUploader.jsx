@@ -31,20 +31,7 @@ const SmartUploader = ({ onAutoFill }) => {
     }
   };
 
-  return (
-    <div className="p-4 border rounded bg-gray-50">
-      <input type="file" onChange={handleFileChange} className="mb-2" />
-      <button onClick={handleUpload} className="bg-blue-500 text-white px-4 py-2 rounded">
-        Comparer et remplir
-      </button>
-      <div className="mt-2 text-sm">{status}</div>
-      {confidence !== null && (
-        <div className={`mt-2 p-2 rounded ${confidence > 85 ? 'bg-green-300' : confidence > 60 ? 'bg-yellow-300' : 'bg-red-300'}`}>
-          Score de confiance : {confidence}%
-        </div>
-      )}
-    </div>
-  );
+ 
 };
 
 export default SmartUploader;

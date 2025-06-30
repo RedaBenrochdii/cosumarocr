@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { createWorker } from 'tesseract.js';
+import axios from 'axios';
 
 const extractFieldsFromText = (text) => {
-  // Patterns améliorés avec gestion des variantes
   const patterns = {
     Matricule_Employe: /Matricule\s*[_]?\s*Employe?\s*[:]?\s*(\w+)/i,
     Nom_Employe: /Nom\s*[_]?\s*Employe?\s*[:]?\s*([A-Za-zÀ-ÿ- ]+)/i,
@@ -26,8 +26,8 @@ const extractFieldsFromText = (text) => {
 };
 
 export default function OCRScanner({ onAutoFill }) {
-  const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState('');
+  const [ocrMethod, setOcrMethod] = useState('gemini'); // gemini ou tesseract
   const workerRef = React.useRef(null);
 
   useEffect(() => {
@@ -45,42 +45,81 @@ export default function OCRScanner({ onAutoFill }) {
 
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
-    if (!file || !workerRef.current) return;
+    if (!file) return;
 
-    try {
-      setStatus('Traitement...');
-      const { data: { text } } = await workerRef.current.recognize(file);
-      const fields = extractFieldsFromText(text);
-      
-      // Post-traitement des valeurs
-      const cleanedFields = Object.fromEntries(
-        Object.entries(fields).map(([key, value]) => [
-          key, 
-          value.replace(/['"]/g, '') // Enlève les guillemets
-        ])
-      );
+    if (ocrMethod === 'tesseract') {
+      setStatus('Traitement local avec Tesseract...');
+      try {
+        const { data: { text } } = await workerRef.current.recognize(file);
+        const fields = extractFieldsFromText(text);
+        const cleanedFields = Object.fromEntries(
+          Object.entries(fields).map(([key, value]) => [key, value.replace(/['"]/g, '')])
+        );
+        onAutoFill(cleanedFields);
+        setStatus('Champs extraits localement !');
+      } catch (error) {
+        console.error("Erreur OCR Tesseract:", error);
+        setStatus('Erreur Tesseract');
+      }
+    } else {
+      setStatus('Envoi à Gemini...');
+      const formData = new FormData();
+      formData.append('image', file);
 
-      onAutoFill(cleanedFields);
-      setStatus('Terminé');
-    } catch (error) {
-      console.error("Erreur OCR:", error);
-      setStatus('Échec');
+      try {
+        const response = await axios.post('http://localhost:4000/api/ocr/gemini', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        onAutoFill(response.data);
+        setStatus('Champs extraits par Gemini !');
+      } catch (error) {
+        console.error("Erreur OCR Gemini:", error);
+        setStatus('Erreur Gemini');
+        alert('Une erreur est survenue lors de l\'analyse par l\'IA.');
+      }
     }
   };
 
   return (
-    <div className="ocr-section">
+    <div className="ocr-section" style={{ border: '1px solid #ccc', padding: '1rem', borderRadius: '8px' }}>
+      <h3>OCR : Choisir une méthode</h3>
+      
+      <div style={{ marginBottom: '1rem' }}>
+        <label>
+          <input
+            type="radio"
+            name="ocrMethod"
+            value="gemini"
+            checked={ocrMethod === 'gemini'}
+            onChange={() => setOcrMethod('gemini')}
+          /> IA Gemini (serveur)
+        </label>
+        <br />
+        <label>
+          <input
+            type="radio"
+            name="ocrMethod"
+            value="tesseract"
+            checked={ocrMethod === 'tesseract'}
+            onChange={() => setOcrMethod('tesseract')}
+          /> Local (Tesseract.js)
+        </label>
+      </div>
+
       <label className="ocr-upload-label">
         <input
           type="file"
           accept="image/*"
           onChange={handleImageUpload}
-          className="ocr-input"
+          disabled={status.includes('...')
+            || ocrMethod === 'tesseract' && !workerRef.current}
         />
         <span className="ocr-button">
+          {status.includes('...') ? 'Traitement en cours...' : 'Choisir un fichier'}
         </span>
       </label>
-      {status && <div className="ocr-status">{status}</div>}
+
+      {status && <div className="ocr-status" style={{ marginTop: '0.5rem' }}>Statut : {status}</div>}
     </div>
   );
 }

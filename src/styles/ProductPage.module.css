@@ -1,0 +1,129 @@
+:root {
+  --clr-bg: #f9fafb;
+  --clr-card: #ffffff;
+  --clr-text: #1f2937;
+  --clr-border: #e5e7eb;
+  --clr-primary: #2563eb;
+  --clr-danger: #dc2626;
+  --radius: 12px;
+}
+
+[data-theme='dark'] {
+  --clr-bg: #111827;
+  --clr-card: #1f2937;
+  --clr-text: #f9fafb;
+  --clr-border: #374151;
+}
+
+/* Conteneur principal */
+.container {
+  padding: 2rem;
+  background-color: var(--clr-bg);
+  color: var(--clr-text);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Titres */
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--clr-border);
+}
+
+/* Formulaires */
+.form {
+  background-color: var(--clr-card);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+/* Champs */
+.input {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  background-color: var(--clr-card);
+  color: var(--clr-text);
+  transition: border 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--clr-primary);
+}
+
+/* Boutons */
+.primaryButton {
+  background-color: var(--clr-primary);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 600;
+  margin-top: 0.5rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.primaryButton:hover {
+  background-color: #1d4ed8;
+}
+
+.dangerButton {
+  background-color: var(--clr-danger);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 600;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dangerButton:hover {
+  background-color: #991b1b;
+}
+
+/* Liste des membres */
+ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+}
+
+li {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

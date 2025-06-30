@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '../styles/ConsumptionForm.module.css';
-import SmartUploader from './SmartUploader'; // Assure-toi que ce fichier existe
+import SmartUploader from './SmartUploader';
+import axios from 'axios';
 
 export function ConsumptionForm({
   formData,
@@ -11,15 +12,41 @@ export function ConsumptionForm({
   setFormData,
   dependents = []
 }) {
+  const [matriculeTimeout, setMatriculeTimeout] = useState(null);
+
   const handleAutoFill = (data) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      Nom_Employe: data.employeeId || prevData.Nom_Employe,
-      Type_Malade: data.disease || prevData.Type_Malade,
-      Montant: data.amount || prevData.Montant,
-      // Ajoute d'autres champs si nécessaires (ex : médecin, déclaration...)
+    setFormData((prev) => ({
+      ...prev,
+      ...data,
+      Montant: data.Montant || prev.Montant,
+      DateConsultation: data.DateConsultation || prev.DateConsultation,
     }));
   };
+
+  const handleMatriculeBlur = () => {
+    const matricule = formData.Matricule_Employe?.trim();
+    if (!matricule) return;
+
+    axios.get(`http://localhost:4000/api/employes/${matricule}`)
+      .then(res => {
+        const emp = res.data;
+        setFormData((prev) => ({
+          ...prev,
+          Nom_Employe: emp.Nom_Employe || '',
+          Prenom_Employe: emp.Prenom_Employe || '',
+          DateConsultation: new Date().toISOString().split('T')[0]
+        }));
+      })
+      .catch(err => {
+        console.warn("Employé non trouvé :", err.response?.data?.error || err.message);
+      });
+  };
+
+  useEffect(() => {
+    if (matriculeTimeout) clearTimeout(matriculeTimeout);
+    setMatriculeTimeout(setTimeout(handleMatriculeBlur, 600));
+    return () => clearTimeout(matriculeTimeout);
+  }, [formData.Matricule_Employe]);
 
   return (
     <>
@@ -130,7 +157,6 @@ export function ConsumptionForm({
 
         <select
           name="Ayant_Droit"
-          id="Ayant_Droit"
           value={formData.Ayant_Droit}
           onChange={onChange}
           required

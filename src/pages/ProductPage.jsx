@@ -1,5 +1,6 @@
+// ProductionDashboard.jsx
 import React, { useEffect, useState } from 'react';
-import styles from '../styles/FormPage.module.css';
+import styles from '../styles/ProductPage.module.css';
 import axios from 'axios';
 
 export default function ProductionDashboard() {
@@ -12,66 +13,64 @@ export default function ProductionDashboard() {
     fetchEmployes();
   }, []);
 
-  const fetchEmployes = () => {
-    axios.get('http://localhost:4000/api/employes')
-      .then(res => setEmployes(res.data))
-      .catch(console.error);
+  const fetchEmployes = async () => {
+    try {
+      const res = await axios.get('http://localhost:4000/api/employes');
+      setEmployes(res.data);
+    } catch (err) {
+      console.error("Erreur de chargement :", err);
+    }
   };
 
   const selectedEmploye = employes.find(emp => emp.Matricule_Employe === selectedMatricule);
 
-  const handleAddMember = async () => {
-    if (!newMember.nom || !newMember.type) return alert("⚠️ Nom et Type requis !");
-    const updated = employes.map(emp => {
-      if (emp.Matricule_Employe === selectedMatricule) {
-        const newList = [...(emp.Famille || []), newMember];
-        return { ...emp, Famille: newList };
-      }
-      return emp;
-    });
-    await saveChanges(updated);
-    setNewMember({ nom: '', prenom: '', type: '' });
-  };
-
-  const handleDeleteMember = async (index) => {
-    const updated = employes.map(emp => {
-      if (emp.Matricule_Employe === selectedMatricule) {
-        const newList = [...(emp.Famille || [])];
-        newList.splice(index, 1);
-        return { ...emp, Famille: newList };
-      }
-      return emp;
-    });
-    await saveChanges(updated);
+  const handleAddEmploye = async () => {
+    if (!newEmploye.Matricule_Employe || !newEmploye.Nom_Employe) {
+      return alert("⚠️ Matricule et Nom requis");
+    }
+    try {
+      await axios.post('http://localhost:4000/api/employes', newEmploye);
+      setNewEmploye({ Matricule_Employe: '', Nom_Employe: '', Prenom_Employe: '' });
+      fetchEmployes();
+    } catch (err) {
+      alert("❌ Erreur ajout employé");
+    }
   };
 
   const handleDeleteEmploye = async () => {
     if (!selectedMatricule) return;
-    const updated = employes.filter(emp => emp.Matricule_Employe !== selectedMatricule);
-    await saveChanges(updated);
-    setSelectedMatricule('');
-  };
-
-  const handleAddEmploye = async () => {
-    if (!newEmploye.Matricule_Employe || !newEmploye.Nom_Employe) return alert("⚠️ Champs requis !");
-    const updated = [...employes, { ...newEmploye, Famille: [] }];
-    await saveChanges(updated);
-    setNewEmploye({ Matricule_Employe: '', Nom_Employe: '', Prenom_Employe: '' });
-  };
-
-  const saveChanges = async (updatedData) => {
     try {
-      await axios.post('http://localhost:4000/api/employes/update', updatedData);
-      setEmployes(updatedData);
+      await axios.delete(`http://localhost:4000/api/employes/${selectedMatricule}`);
+      setSelectedMatricule('');
+      fetchEmployes();
     } catch (err) {
-      console.error('Erreur sauvegarde :', err);
-      alert("❌ Erreur lors de la sauvegarde.");
+      alert("❌ Erreur suppression");
+    }
+  };
+
+  const handleAddMember = async () => {
+    if (!newMember.nom || !newMember.type || !selectedMatricule) return alert("⚠️ Champs famille requis");
+    try {
+      await axios.post(`http://localhost:4000/api/employes/${selectedMatricule}/famille`, newMember);
+      setNewMember({ nom: '', prenom: '', type: '' });
+      fetchEmployes();
+    } catch (err) {
+      alert("❌ Erreur ajout membre");
+    }
+  };
+
+  const handleDeleteMember = async (index) => {
+    try {
+      await axios.delete(`http://localhost:4000/api/employes/${selectedMatricule}/famille/${index}`);
+      fetchEmployes();
+    } catch (err) {
+      alert("❌ Erreur suppression membre");
     }
   };
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>👪 Gestion Situation Familiale</h2>
+      <h2 className={styles.title}>Gestion Situation Familiale</h2>
 
       <div className={styles.form}>
         <h3>➕ Ajouter un nouvel employé</h3>
@@ -84,11 +83,11 @@ export default function ProductionDashboard() {
         <input placeholder="Prénom" value={newEmploye.Prenom_Employe}
           onChange={e => setNewEmploye({ ...newEmploye, Prenom_Employe: e.target.value })}
           className={styles.input} />
-        <button onClick={handleAddEmploye} className={styles.primaryButton}>✅ Ajouter Employé</button>
+        <button onClick={handleAddEmploye} className={styles.primaryButton}>Ajouter Employé</button>
       </div>
 
       <div style={{ marginTop: '20px' }}>
-        <label>🧑 Sélectionner un employé :</label><br />
+        <label> Sélectionner un employé :</label><br />
         <select
           value={selectedMatricule}
           onChange={(e) => setSelectedMatricule(e.target.value)}
